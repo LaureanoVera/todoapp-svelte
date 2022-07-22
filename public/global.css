@@ -1,5 +1,6 @@
 body {
   background-color: #737272;
   background-image: linear-gradient(43deg, #8C8C8C 0%, #737272 46%, #565659 100%);
+  min-height: 100vh;
   font-family: 'Montserrat', sans-serif
 }
