@@ -1,27 +1,24 @@
 <script>
   import Form from "./components/Form.svelte";
+  import FormControl from "./components/FormControl.svelte";
   import Card from "./components/Card.svelte";
-  import Noty from "noty";
+  import Author from "./components/Author.svelte";
 
-  let items = [
-    {
-      id: "25251525",
-      name: "Name",
-      desc: "Bla blalbblab lab lala",
-      cat: "",
-      imgUrl: "images/image-empty.png",
-    },
-  ];
-
+  let items = [];
   let item = {};
-
   let editStatus = false;
+  let formStatus = false;
+
+  const loadItems = () => {
+    items = JSON.parse(localStorage.getItem("items")) || [];
+  };
 
   const cleanItem = () => {
     item = {
       id: "",
       name: "",
       desc: "",
+      date: "2022-12-17",
       cat: "",
       imgUrl: "",
     };
@@ -33,10 +30,12 @@
     }
     item = edit;
     editStatus = true;
+    formStatus = true;
   };
 
   const deleteItem = (id) => {
-    items = items.filter((item) => item.id !== id);
+    items = items.filter((item) => item.id !== String(id));
+    localStorage.setItem("items", JSON.stringify(items));
   };
 
   const updateItem = () => {
@@ -46,14 +45,10 @@
       update.cat = "Others";
     }
     items[index] = update;
+    localStorage.setItem("items", JSON.stringify(items));
     cleanItem();
     editStatus = false;
-    new Noty({
-      theme: "sunset",
-      type: "alert",
-      timeout: 2000,
-      text: "Update Successfully",
-    }).show();
+    formStatus = false;
   };
 
   const addItem = () => {
@@ -62,8 +57,11 @@
       item.cat = "Others";
     }
     item.id = `${idCode}-${item.cat}`;
-    items = items.concat(item);
+    items.push(item);
+    localStorage.setItem("items", JSON.stringify(items));
     cleanItem();
+    formStatus = false;
+    loadItems();
   };
 
   const handleSubmit = () => {
@@ -75,46 +73,32 @@
   };
 
   cleanItem();
-
-  // LocalStorage
-  if (typeof Storage !== "undefined") {
-    // LocalStorage disponible
-    localStorage.setItem("itemsList", JSON.stringify(items));
-  } else {
-    // LocalStorage no soportado en este navegador
-  }
-  let itemsList = JSON.parse(localStorage.getItem("itemsList"));
-  console.log(itemsList);
+  loadItems();
 </script>
 
+<FormControl {formStatus}>
+  <Form on:submit={handleSubmit} {item} {editStatus} />
+</FormControl>
 <main>
-  <section class="container">
+  <Author />
+  <section class="container pt-4">
     <article class="row">
       {#each items as item, i}
         <Card {editItem} {deleteItem} {item} />
       {/each}
     </article>
-    <article class="row">
-      <div class="col-12">
-        <div class="card-body shadow rounded">
-          <Form on:submit={handleSubmit} {item} {editStatus} />
-        </div>
-      </div>
-    </article>
   </section>
 </main>
 
 <style>
-  main {
-    text-align: center;
-    padding: 1em;
-    max-width: 240px;
-    margin: 0 auto;
+  :global(:root) {
+    --main-red: #d9534f;
   }
 
-  @media (min-width: 640px) {
-    main {
-      max-width: none;
-    }
+  :global(*) {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
   }
 </style>

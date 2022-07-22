@@ -26,10 +26,19 @@
   </div>
   <div class="form-group">
     <input
+      bind:value={item.date}
+      required
+      type="date"
+      id="itemDateTime"
+      class="form-control my-2"
+    />
+  </div>
+  <div class="form-group">
+    <input
       bind:value={item.imgUrl}
       type="url"
       id="itemImageUrl"
-      placeholder="https://yoururl.here"
+      placeholder="https://imageurl.here"
       class="form-control my-2"
     />
   </div>
